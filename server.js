@@ -8,7 +8,7 @@ const PORT = process.env.PORT || 3000;
 let leads = [];
 
 app.use(bodyParser.json());
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Endpoint to receive leads from n8n (or Vapi directly)
 app.post('/api/leads', (req, res) => {
@@ -37,8 +37,7 @@ app.get('/api/sheet-leads', async (req, res) => {
         const response = await fetch(url);
         const text = await response.text();
 
-        // Strip JSONP wrapper: "/*O_o*/\ngoogle.visualization.Query.setResponse({...});"
-        // Find the opening paren of setResponse( and the closing );
+        // Strip JSONP wrapper
         const startIdx = text.indexOf('setResponse(') + 'setResponse('.length;
         const endIdx = text.lastIndexOf(');');
         const jsonStr = text.substring(startIdx, endIdx);
@@ -77,5 +76,7 @@ app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
     console.log(`- Demo Site: http://localhost:${PORT}`);
     console.log(`- Admin Dashboard: http://localhost:${PORT}/admin`);
-    console.log(`- Webhook Endpoint: http://localhost:${PORT}/api/leads (expose this via ngrok)`);
 });
+
+// Export for Vercel serverless
+module.exports = app;
