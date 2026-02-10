@@ -70,7 +70,7 @@ app.get('/api/sheet-leads', async (req, res) => {
 
 // Serve the admin dashboard
 app.get('/admin', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'admin.html'));
+    res.redirect('/admin.html');
 });
 
 app.listen(PORT, () => {
