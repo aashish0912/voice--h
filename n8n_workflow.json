@@ -1,0 +1,968 @@
+{
+    "nodes": [
+        {
+            "parameters": {
+                "httpMethod": "POST",
+                "path": "voicehelden-lead",
+                "options": {}
+            },
+            "name": "Webhook",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [
+                0,
+                0
+            ],
+            "id": "417e0413-7f67-45db-877d-000491e0a332",
+            "webhookId": "b0997970-c7e0-4385-9445-1dfe9fb643cb"
+        },
+        {
+            "parameters": {
+                "values": {
+                    "string": [
+                        {
+                            "name": "lead_name",
+                            "value": "={{$json.body.message.toolCalls[0].function.arguments.name}}"
+                        },
+                        {
+                            "name": "lead_interest",
+                            "value": "={{ $json.body.message.toolCalls[0].function.arguments.intrest }}"
+                        },
+                        {
+                            "name": "timestamp",
+                            "value": "={{new Date().toISOString()}}"
+                        }
+                    ],
+                    "number": [
+                        {
+                            "name": "phone number",
+                            "value": "={{ $json.body.message.toolCalls[0].function.arguments.phone }}"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "name": "Extract Data",
+            "type": "n8n-nodes-base.set",
+            "typeVersion": 1,
+            "position": [
+                208,
+                0
+            ],
+            "id": "b38d4390-cb43-49b3-ab20-1afd9cc759ce"
+        },
+        {
+            "parameters": {
+                "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor (const item of $input.all()) {\n  item.json.myNewField = 1;\n}\n\nreturn $input.all();"
+            },
+            "name": "Log to Console/File",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 1,
+            "position": [
+                400,
+                0
+            ],
+            "id": "4693d3cc-c990-4adb-ba3b-84fbfb3adce8"
+        },
+        {
+            "parameters": {
+                "operation": "append",
+                "documentId": {
+                    "__rl": true,
+                    "value": "1uq4wQ-SH_iXvfRioBG9A8edMsGoMWIzIgoinJ-q0heQ",
+                    "mode": "list",
+                    "cachedResultName": "voice",
+                    "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1uq4wQ-SH_iXvfRioBG9A8edMsGoMWIzIgoinJ-q0heQ/edit?usp=drivesdk"
+                },
+                "sheetName": {
+                    "__rl": true,
+                    "value": "gid=0",
+                    "mode": "list",
+                    "cachedResultName": "Sheet1",
+                    "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1uq4wQ-SH_iXvfRioBG9A8edMsGoMWIzIgoinJ-q0heQ/edit#gid=0"
+                },
+                "columns": {
+                    "mappingMode": "defineBelow",
+                    "value": {
+                        "name": "={{ $json.body.message.toolCalls[0].function.arguments.name }}",
+                        "contact": "={{ $json.body.message.toolCalls[0].function.arguments.phone }}",
+                        "intrest": "={{ $json.body.message.toolCallList[0].function.arguments.intrest }}"
+                    },
+                    "matchingColumns": [],
+                    "schema": [
+                        {
+                            "id": "name",
+                            "displayName": "name",
+                            "required": false,
+                            "defaultMatch": false,
+                            "display": true,
+                            "type": "string",
+                            "canBeUsedToMatch": true
+                        },
+                        {
+                            "id": "contact",
+                            "displayName": "contact",
+                            "required": false,
+                            "defaultMatch": false,
+                            "display": true,
+                            "type": "string",
+                            "canBeUsedToMatch": true
+                        },
+                        {
+                            "id": "time",
+                            "displayName": "time",
+                            "required": false,
+                            "defaultMatch": false,
+                            "display": true,
+                            "type": "string",
+                            "canBeUsedToMatch": true
+                        },
+                        {
+                            "id": "intrest",
+                            "displayName": "intrest",
+                            "required": false,
+                            "defaultMatch": false,
+                            "display": true,
+                            "type": "string",
+                            "canBeUsedToMatch": true
+                        }
+                    ],
+                    "attemptToConvertTypes": false,
+                    "convertFieldsToString": false
+                },
+                "options": {}
+            },
+            "type": "n8n-nodes-base.googleSheets",
+            "typeVersion": 4.7,
+            "position": [
+                608,
+                0
+            ],
+            "id": "c7c93e3b-f80d-4287-bae1-370d00765e14",
+            "name": "Append row in sheet",
+            "credentials": {
+                "googleSheetsOAuth2Api": {
+                    "id": "SGa3Z3AZvFB7SB3a",
+                    "name": "Google Sheets account 3"
+                }
+            }
+        }
+    ],
+    "connections": {
+        "Webhook": {
+            "main": [
+                [
+                    {
+                        "node": "Extract Data",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Extract Data": {
+            "main": [
+                [
+                    {
+                        "node": "Log to Console/File",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Log to Console/File": {
+            "main": [
+                [
+                    {
+                        "node": "Append row in sheet",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "pinData": {
+        "Webhook": [
+            {
+                "headers": {
+                    "host": "4ec9-2409-40f0-3182-be5e-3454-9a08-b060-ab37.ngrok-free.app",
+                    "user-agent": "axios/1.8.3",
+                    "content-length": "16507",
+                    "accept": "application/json, text/plain, */*",
+                    "accept-encoding": "identity",
+                    "baggage": "sentry-environment=production,sentry-public_key=a0021577936aec367b16615ad816c078,sentry-trace_id=9d5753e0a6344c75beb571da34743bf1",
+                    "content-type": "application/json",
+                    "cookie": "callId=019c484a-49ba-7bbb-98bd-e583e0bebd68",
+                    "sentry-trace": "9d5753e0a6344c75beb571da34743bf1-9252287787c4de12",
+                    "x-call-id": "019c484a-49ba-7bbb-98bd-e583e0bebd68",
+                    "x-forwarded-for": "52.26.145.238",
+                    "x-forwarded-host": "4ec9-2409-40f0-3182-be5e-3454-9a08-b060-ab37.ngrok-free.app",
+                    "x-forwarded-proto": "https",
+                    "x-vapi-secret": ""
+                },
+                "params": {},
+                "query": {},
+                "body": {
+                    "message": {
+                        "timestamp": 1770739429185,
+                        "type": "tool-calls",
+                        "toolCalls": [
+                            {
+                                "id": "fc_0c632b92-1cb3-4225-8ae7-1f5b0f1ba502",
+                                "type": "function",
+                                "function": {
+                                    "name": "capture_lead",
+                                    "arguments": {
+                                        "intrest": "demo",
+                                        "name": "Ashish",
+                                        "phone": "9850560"
+                                    }
+                                }
+                            }
+                        ],
+                        "toolCallList": [
+                            {
+                                "id": "fc_0c632b92-1cb3-4225-8ae7-1f5b0f1ba502",
+                                "type": "function",
+                                "function": {
+                                    "name": "capture_lead",
+                                    "arguments": {
+                                        "intrest": "demo",
+                                        "name": "Ashish",
+                                        "phone": "9850560"
+                                    }
+                                }
+                            }
+                        ],
+                        "toolWithToolCallList": [
+                            {
+                                "type": "function",
+                                "function": {
+                                    "name": "capture_lead",
+                                    "parameters": {
+                                        "type": "object",
+                                        "required": [
+                                            "intrest"
+                                        ],
+                                        "properties": {
+                                            "name": {
+                                                "type": "string",
+                                                "default": "",
+                                                "description": "\"The caller's name\""
+                                            },
+                                            "phone": {
+                                                "type": "string",
+                                                "default": "",
+                                                "description": "\"The caller's phone number\""
+                                            },
+                                            "intrest": {
+                                                "type": "string",
+                                                "default": "",
+                                                "description": " \"What the user wants (demo, pricing, general info)\""
+                                            }
+                                        }
+                                    },
+                                    "description": "Captures lead details when a user expresses interest or wants a followup"
+                                },
+                                "server": {
+                                    "url": "https://4ec9-2409-40f0-3182-be5e-3454-9a08-b060-ab37.ngrok-free.app/webhook/voicehelden-lead",
+                                    "timeoutSeconds": 20
+                                },
+                                "messages": [
+                                    {
+                                        "type": "request-start",
+                                        "contents": [],
+                                        "conditions": [],
+                                        "blocking": false
+                                    }
+                                ],
+                                "toolCall": {
+                                    "id": "fc_0c632b92-1cb3-4225-8ae7-1f5b0f1ba502",
+                                    "type": "function",
+                                    "function": {
+                                        "name": "capture_lead",
+                                        "arguments": {
+                                            "intrest": "demo",
+                                            "name": "Ashish",
+                                            "phone": "9850560"
+                                        }
+                                    }
+                                }
+                            }
+                        ],
+                        "artifact": {
+                            "messages": [
+                                {
+                                    "role": "system",
+                                    "message": "You are Gwen, an AI voice assistant for Voicehelden.\n\n# KNOWLEDGE BASE\n- Company: Voicehelden creates AI employees (voice assistants, chatbots) that work 24/7.\n- Value: Turn lost calls into revenue. 67% of customers hang up if not helped. AI handles lead qualification, scheduling, and support.\n- Services: Inbound/Outbound Voice AI, AI SMS & Missed Call Text Back, Webchat, Meta Ad engagement.\n- Pricing: Subscriptions start from €297/month.\n- Contact: 020-7820049.\n\n# RESTRICTIONS\n- Only answer questions based on the information above.\n- If you don't know the answer say: \"I'm not sure about that, but I can have a human colleague follow up with you.\"\n- Do NOT invent features or pricing.\n- Keep answers short and conversational.",
+                                    "time": 1770739354551,
+                                    "secondsFromStart": 0
+                                },
+                                {
+                                    "role": "bot",
+                                    "message": "Hi. Thanks for calling Voicehelden. This is Gwen, your AI assistant. How can I help you automate your business today?",
+                                    "time": 1770739355646,
+                                    "endTime": 1770739362275,
+                                    "secondsFromStart": 0.975,
+                                    "duration": 6629,
+                                    "source": ""
+                                },
+                                {
+                                    "role": "user",
+                                    "message": "Hi. This is Ashish here.",
+                                    "time": 1770739363799,
+                                    "endTime": 1770739364351,
+                                    "secondsFromStart": 9.128,
+                                    "duration": 552,
+                                    "metadata": {
+                                        "wordLevelConfidence": [
+                                            {
+                                                "word": "Hi.",
+                                                "start": 1770739363799,
+                                                "end": 1770739363909.4,
+                                                "confidence": 1,
+                                                "language": "",
+                                                "punctuated_word": "Hi."
+                                            },
+                                            {
+                                                "word": "This",
+                                                "start": 1770739363909.4,
+                                                "end": 1770739364019.8,
+                                                "confidence": 0.9995,
+                                                "language": "",
+                                                "punctuated_word": "This"
+                                            },
+                                            {
+                                                "word": "is",
+                                                "start": 1770739364019.8,
+                                                "end": 1770739364130.2,
+                                                "confidence": 1,
+                                                "language": "",
+                                                "punctuated_word": "is"
+                                            },
+                                            {
+                                                "word": "Ashish",
+                                                "start": 1770739364130.2,
+                                                "end": 1770739364240.6,
+                                                "confidence": 0.9683,
+                                                "language": "",
+                                                "punctuated_word": "Ashish"
+                                            },
+                                            {
+                                                "word": "here.",
+                                                "start": 1770739364240.6,
+                                                "end": 1770739364351,
+                                                "confidence": 1,
+                                                "language": "",
+                                                "punctuated_word": "here."
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "role": "bot",
+                                    "message": "Nice to meet you, Ashish. How can I help you with VoiceElden's AI solutions today?",
+                                    "time": 1770739369973,
+                                    "endTime": 1770739373795,
+                                    "secondsFromStart": 15.302,
+                                    "duration": 3101,
+                                    "source": ""
+                                },
+                                {
+                                    "role": "user",
+                                    "message": "I just wanna automate my company. I need context of the voice header.",
+                                    "time": 1770739374897,
+                                    "endTime": 1770739379071,
+                                    "secondsFromStart": 20.226,
+                                    "duration": 4174,
+                                    "metadata": {
+                                        "wordLevelConfidence": [
+                                            {
+                                                "word": "I",
+                                                "start": 1770739374897,
+                                                "end": 1770739375218.077,
+                                                "confidence": 1,
+                                                "language": "",
+                                                "punctuated_word": "I"
+                                            },
+                                            {
+                                                "word": "just",
+                                                "start": 1770739375218.077,
+                                                "end": 1770739375539.1538,
+                                                "confidence": 1,
+                                                "language": "",
+                                                "punctuated_word": "just"
+                                            },
+                                            {
+                                                "word": "wanna",
+                                                "start": 1770739375539.1538,
+                                                "end": 1770739375860.2307,
+                                                "confidence": 0.9946,
+                                                "language": "",
+                                                "punctuated_word": "wanna"
+                                            },
+                                            {
+                                                "word": "automate",
+                                                "start": 1770739375860.2307,
+                                                "end": 1770739376181.3076,
+                                                "confidence": 0.9995,
+                                                "language": "",
+                                                "punctuated_word": "automate"
+                                            },
+                                            {
+                                                "word": "my",
+                                                "start": 1770739376181.3076,
+                                                "end": 1770739376502.3845,
+                                                "confidence": 1,
+                                                "language": "",
+                                                "punctuated_word": "my"
+                                            },
+                                            {
+                                                "word": "company.",
+                                                "start": 1770739376502.3845,
+                                                "end": 1770739376823.4614,
+                                                "confidence": 1,
+                                                "language": "",
+                                                "punctuated_word": "company."
+                                            },
+                                            {
+                                                "word": "I",
+                                                "start": 1770739376823.4614,
+                                                "end": 1770739377144.5386,
+                                                "confidence": 0.9976,
+                                                "language": "",
+                                                "punctuated_word": "I"
+                                            },
+                                            {
+                                                "word": "need",
+                                                "start": 1770739377144.5386,
+                                                "end": 1770739377465.6155,
+                                                "confidence": 0.9971,
+                                                "language": "",
+                                                "punctuated_word": "need"
+                                            },
+                                            {
+                                                "word": "context",
+                                                "start": 1770739377465.6155,
+                                                "end": 1770739377786.6924,
+                                                "confidence": 0.9199,
+                                                "language": "",
+                                                "punctuated_word": "context"
+                                            },
+                                            {
+                                                "word": "of",
+                                                "start": 1770739377786.6924,
+                                                "end": 1770739378107.7693,
+                                                "confidence": 1,
+                                                "language": "",
+                                                "punctuated_word": "of"
+                                            },
+                                            {
+                                                "word": "the",
+                                                "start": 1770739378107.7693,
+                                                "end": 1770739378428.8462,
+                                                "confidence": 0.9995,
+                                                "language": "",
+                                                "punctuated_word": "the"
+                                            },
+                                            {
+                                                "word": "voice",
+                                                "start": 1770739378428.8462,
+                                                "end": 1770739378749.923,
+                                                "confidence": 0.9971,
+                                                "language": "",
+                                                "punctuated_word": "voice"
+                                            },
+                                            {
+                                                "word": "header.",
+                                                "start": 1770739378749.923,
+                                                "end": 1770739379071,
+                                                "confidence": 1,
+                                                "language": "",
+                                                "punctuated_word": "header."
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "role": "bot",
+                                    "message": "Sure thing, Ashish. Voice Helden's voice AI handles inbound and outbound calls twenty four seven, answering qualifying leads, scheduling appointments, and providing support.",
+                                    "time": 1770739380725,
+                                    "endTime": 1770739391315,
+                                    "secondsFromStart": 26.054,
+                                    "duration": 9850,
+                                    "source": ""
+                                },
+                                {
+                                    "role": "user",
+                                    "message": "Like, can I go ahead",
+                                    "time": 1770739397546,
+                                    "endTime": 1770739398111,
+                                    "secondsFromStart": 42.875,
+                                    "duration": 565,
+                                    "metadata": {
+                                        "wordLevelConfidence": [
+                                            {
+                                                "word": "Like,",
+                                                "start": 1770739397546,
+                                                "end": 1770739397659,
+                                                "confidence": 1,
+                                                "language": "",
+                                                "punctuated_word": "Like,"
+                                            },
+                                            {
+                                                "word": "can",
+                                                "start": 1770739397659,
+                                                "end": 1770739397772,
+                                                "confidence": 1,
+                                                "language": "",
+                                                "punctuated_word": "can"
+                                            },
+                                            {
+                                                "word": "I",
+                                                "start": 1770739397772,
+                                                "end": 1770739397885,
+                                                "confidence": 0.915,
+                                                "language": "",
+                                                "punctuated_word": "I"
+                                            },
+                                            {
+                                                "word": "go",
+                                                "start": 1770739397885,
+                                                "end": 1770739397998,
+                                                "confidence": 0.9976,
+                                                "language": "",
+                                                "punctuated_word": "go"
+                                            },
+                                            {
+                                                "word": "ahead",
+                                                "start": 1770739397998,
+                                                "end": 1770739398111,
+                                                "confidence": 0.9814,
+                                                "language": "",
+                                                "punctuated_word": "ahead"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "role": "bot",
+                                    "message": "Got it, Ashish. I've captured your request for a demo. One of our team members will reach out shortly, uh, to walk you through how our VoiceAI can automate your company. If you'd like to share a phone number or preferred time, just let me know.",
+                                    "time": 1770739401880,
+                                    "endTime": 1770739415715,
+                                    "secondsFromStart": 47.209,
+                                    "duration": 13835,
+                                    "source": ""
+                                },
+                                {
+                                    "toolCalls": [
+                                        {
+                                            "id": "fc_972e669e-28be-415c-85d6-ef2b1c672e3f",
+                                            "type": "function",
+                                            "function": {
+                                                "name": "capture_lead",
+                                                "arguments": "{\"intrest\": \"demo\", \"name\": \"Ashish\"}"
+                                            }
+                                        }
+                                    ],
+                                    "role": "tool_calls",
+                                    "message": "",
+                                    "time": 1770739405278,
+                                    "secondsFromStart": 50.607
+                                },
+                                {
+                                    "role": "tool_call_result",
+                                    "time": 1770739406179,
+                                    "secondsFromStart": 51.508,
+                                    "name": "capture_lead",
+                                    "result": "No result returned. If this is unexpected, see troubleshooting tips at https://docs.vapi.ai/tools/custom-tools-troubleshooting#no-result-returned-error",
+                                    "toolCallId": "fc_972e669e-28be-415c-85d6-ef2b1c672e3f"
+                                },
+                                {
+                                    "role": "user",
+                                    "message": "My phone number is nine eight five zero five six zero.",
+                                    "time": 1770739417562,
+                                    "endTime": 1770739422111,
+                                    "secondsFromStart": 62.891,
+                                    "duration": 4549,
+                                    "metadata": {
+                                        "wordLevelConfidence": [
+                                            {
+                                                "word": "My",
+                                                "start": 1770739417562,
+                                                "end": 1770739417975.5454,
+                                                "confidence": 0.7114,
+                                                "language": "",
+                                                "punctuated_word": "My"
+                                            },
+                                            {
+                                                "word": "phone",
+                                                "start": 1770739417975.5454,
+                                                "end": 1770739418389.0908,
+                                                "confidence": 1,
+                                                "language": "",
+                                                "punctuated_word": "phone"
+                                            },
+                                            {
+                                                "word": "number",
+                                                "start": 1770739418389.0908,
+                                                "end": 1770739418802.6365,
+                                                "confidence": 1,
+                                                "language": "",
+                                                "punctuated_word": "number"
+                                            },
+                                            {
+                                                "word": "is",
+                                                "start": 1770739418802.6365,
+                                                "end": 1770739419216.182,
+                                                "confidence": 1,
+                                                "language": "",
+                                                "punctuated_word": "is"
+                                            },
+                                            {
+                                                "word": "nine",
+                                                "start": 1770739419216.182,
+                                                "end": 1770739419629.7273,
+                                                "confidence": 0.9966,
+                                                "language": "",
+                                                "punctuated_word": "nine"
+                                            },
+                                            {
+                                                "word": "eight",
+                                                "start": 1770739419629.7273,
+                                                "end": 1770739420043.2727,
+                                                "confidence": 1,
+                                                "language": "",
+                                                "punctuated_word": "eight"
+                                            },
+                                            {
+                                                "word": "five",
+                                                "start": 1770739420043.2727,
+                                                "end": 1770739420456.818,
+                                                "confidence": 0.9985,
+                                                "language": "",
+                                                "punctuated_word": "five"
+                                            },
+                                            {
+                                                "word": "zero",
+                                                "start": 1770739420456.818,
+                                                "end": 1770739420870.3635,
+                                                "confidence": 0.9092,
+                                                "language": "",
+                                                "punctuated_word": "zero"
+                                            },
+                                            {
+                                                "word": "five",
+                                                "start": 1770739420870.3635,
+                                                "end": 1770739421283.9092,
+                                                "confidence": 1,
+                                                "language": "",
+                                                "punctuated_word": "five"
+                                            },
+                                            {
+                                                "word": "six",
+                                                "start": 1770739421283.9092,
+                                                "end": 1770739421697.4546,
+                                                "confidence": 1,
+                                                "language": "",
+                                                "punctuated_word": "six"
+                                            },
+                                            {
+                                                "word": "zero.",
+                                                "start": 1770739421697.4546,
+                                                "end": 1770739422111,
+                                                "confidence": 1,
+                                                "language": "",
+                                                "punctuated_word": "zero."
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "toolCalls": [
+                                        {
+                                            "id": "fc_b4d771f9-d644-41c3-a1de-e560564e3a1e",
+                                            "type": "function",
+                                            "function": {
+                                                "name": "capture_lead",
+                                                "arguments": "{\n  \"intrest\": \"demo\",\n  \"name\": \"Ashish\",\n  \"phone\": \"9850560\"\n}"
+                                            }
+                                        }
+                                    ],
+                                    "role": "tool_calls",
+                                    "message": "",
+                                    "time": 1770739427947,
+                                    "secondsFromStart": 73.276
+                                },
+                                {
+                                    "role": "tool_call_result",
+                                    "time": 1770739428639,
+                                    "secondsFromStart": 73.968,
+                                    "name": "capture_lead",
+                                    "result": "No result returned. If this is unexpected, see troubleshooting tips at https://docs.vapi.ai/tools/custom-tools-troubleshooting#no-result-returned-error",
+                                    "toolCallId": "fc_b4d771f9-d644-41c3-a1de-e560564e3a1e"
+                                },
+                                {
+                                    "toolCalls": [
+                                        {
+                                            "id": "fc_0c632b92-1cb3-4225-8ae7-1f5b0f1ba502",
+                                            "type": "function",
+                                            "function": {
+                                                "name": "capture_lead",
+                                                "arguments": "{\n  \"intrest\": \"demo\",\n  \"name\": \"Ashish\",\n  \"phone\": \"9850560\"\n}"
+                                            }
+                                        }
+                                    ],
+                                    "role": "tool_calls",
+                                    "message": "",
+                                    "time": 1770739429180,
+                                    "secondsFromStart": 74.509
+                                }
+                            ],
+                            "messagesOpenAIFormatted": [
+                                {
+                                    "role": "system",
+                                    "content": "You are Gwen, an AI voice assistant for Voicehelden.\n\n# KNOWLEDGE BASE\n- Company: Voicehelden creates AI employees (voice assistants, chatbots) that work 24/7.\n- Value: Turn lost calls into revenue. 67% of customers hang up if not helped. AI handles lead qualification, scheduling, and support.\n- Services: Inbound/Outbound Voice AI, AI SMS & Missed Call Text Back, Webchat, Meta Ad engagement.\n- Pricing: Subscriptions start from €297/month.\n- Contact: 020-7820049.\n\n# RESTRICTIONS\n- Only answer questions based on the information above.\n- If you don't know the answer say: \"I'm not sure about that, but I can have a human colleague follow up with you.\"\n- Do NOT invent features or pricing.\n- Keep answers short and conversational."
+                                },
+                                {
+                                    "role": "assistant",
+                                    "content": "Hi. Thanks for calling Voicehelden. This is Gwen, your AI assistant. How can I help you automate your business today?"
+                                },
+                                {
+                                    "role": "user",
+                                    "content": "Hi. This is Ashish here."
+                                },
+                                {
+                                    "role": "assistant",
+                                    "content": "Nice to meet you, Ashish. How can I help you with VoiceElden's AI solutions today?"
+                                },
+                                {
+                                    "role": "user",
+                                    "content": "I just wanna automate my company. I need context of the voice header."
+                                },
+                                {
+                                    "role": "assistant",
+                                    "content": "Sure thing, Ashish. Voice Helden's voice AI handles inbound and outbound calls twenty four seven, answering qualifying leads, scheduling appointments, and providing support."
+                                },
+                                {
+                                    "role": "user",
+                                    "content": "Like, can I go ahead"
+                                },
+                                {
+                                    "role": "assistant",
+                                    "content": "Got it, Ashish. I've captured your request for a demo. One of our team members will reach out shortly, uh, to walk you through how our VoiceAI can automate your company. If you'd like to share a phone number or preferred time, just let me know.",
+                                    "tool_calls": [
+                                        {
+                                            "id": "fc_972e669e-28be-415c-85d6-ef2b1c672e3f",
+                                            "type": "function",
+                                            "function": {
+                                                "name": "capture_lead",
+                                                "arguments": "{\"intrest\": \"demo\", \"name\": \"Ashish\"}"
+                                            }
+                                        }
+                                    ]
+                                },
+                                {
+                                    "role": "tool",
+                                    "tool_call_id": "fc_972e669e-28be-415c-85d6-ef2b1c672e3f",
+                                    "content": "No result returned. If this is unexpected, see troubleshooting tips at https://docs.vapi.ai/tools/custom-tools-troubleshooting#no-result-returned-error"
+                                },
+                                {
+                                    "role": "user",
+                                    "content": "My phone number is nine eight five zero five six zero."
+                                },
+                                {
+                                    "role": "assistant",
+                                    "tool_calls": [
+                                        {
+                                            "id": "fc_b4d771f9-d644-41c3-a1de-e560564e3a1e",
+                                            "type": "function",
+                                            "function": {
+                                                "name": "capture_lead",
+                                                "arguments": "{\n  \"intrest\": \"demo\",\n  \"name\": \"Ashish\",\n  \"phone\": \"9850560\"\n}"
+                                            }
+                                        }
+                                    ]
+                                },
+                                {
+                                    "role": "tool",
+                                    "tool_call_id": "fc_b4d771f9-d644-41c3-a1de-e560564e3a1e",
+                                    "content": "No result returned. If this is unexpected, see troubleshooting tips at https://docs.vapi.ai/tools/custom-tools-troubleshooting#no-result-returned-error"
+                                },
+                                {
+                                    "role": "assistant",
+                                    "tool_calls": [
+                                        {
+                                            "id": "fc_0c632b92-1cb3-4225-8ae7-1f5b0f1ba502",
+                                            "type": "function",
+                                            "function": {
+                                                "name": "capture_lead",
+                                                "arguments": "{\n  \"intrest\": \"demo\",\n  \"name\": \"Ashish\",\n  \"phone\": \"9850560\"\n}"
+                                            }
+                                        }
+                                    ]
+                                },
+                                {
+                                    "role": "tool",
+                                    "tool_call_id": "fc_0c632b92-1cb3-4225-8ae7-1f5b0f1ba502",
+                                    "content": "Tool Result Still Pending But Proceed Further If Possible."
+                                }
+                            ]
+                        },
+                        "call": {
+                            "id": "019c484a-49ba-7bbb-98bd-e583e0bebd68",
+                            "orgId": "975da361-801f-4a1b-ace9-4326bd6859b7",
+                            "createdAt": "2026-02-10T16:02:34.042Z",
+                            "updatedAt": "2026-02-10T16:02:34.042Z",
+                            "type": "webCall",
+                            "cost": 0,
+                            "monitor": {
+                                "listenUrl": "wss://phone-call-websocket.aws-us-west-2-backend-production3.vapi.ai/019c484a-49ba-7bbb-98bd-e583e0bebd68/listen",
+                                "controlUrl": "https://phone-call-websocket.aws-us-west-2-backend-production3.vapi.ai/019c484a-49ba-7bbb-98bd-e583e0bebd68/control"
+                            },
+                            "transport": {
+                                "conversationType": "voice",
+                                "provider": "daily",
+                                "videoRecordingEnabled": false,
+                                "assistantVideoEnabled": false,
+                                "roomDeleteOnUserLeaveEnabled": true,
+                                "callUrl": "https://vapi.daily.co/4x7rKhRDiB3d6aJyVrfD"
+                            },
+                            "webCallUrl": "https://vapi.daily.co/4x7rKhRDiB3d6aJyVrfD",
+                            "status": "queued",
+                            "assistantId": "df714665-43be-409e-ad85-1343d1f995ea",
+                            "assistantOverrides": {
+                                "clientMessages": [
+                                    "transcript",
+                                    "hang",
+                                    "metadata",
+                                    "tool-calls",
+                                    "tool-calls-result",
+                                    "tool.completed",
+                                    "transfer-update",
+                                    "user-interrupted",
+                                    "status-update",
+                                    "assistant.started"
+                                ],
+                                "variableValues": {}
+                            }
+                        },
+                        "assistant": {
+                            "id": "df714665-43be-409e-ad85-1343d1f995ea",
+                            "orgId": "975da361-801f-4a1b-ace9-4326bd6859b7",
+                            "name": "gwen",
+                            "voice": {
+                                "voiceId": "Elliot",
+                                "provider": "vapi"
+                            },
+                            "createdAt": "2026-02-10T15:10:27.902Z",
+                            "updatedAt": "2026-02-10T15:49:43.902Z",
+                            "model": {
+                                "model": "openai/gpt-oss-120b",
+                                "toolIds": [
+                                    "8c51c69d-c0f8-4ab3-ba61-49a105dcd231"
+                                ],
+                                "messages": [
+                                    {
+                                        "role": "system",
+                                        "content": "You are Gwen, an AI voice assistant for Voicehelden.\n\n# KNOWLEDGE BASE\n- Company: Voicehelden creates AI employees (voice assistants, chatbots) that work 24/7.\n- Value: Turn lost calls into revenue. 67% of customers hang up if not helped. AI handles lead qualification, scheduling, and support.\n- Services: Inbound/Outbound Voice AI, AI SMS & Missed Call Text Back, Webchat, Meta Ad engagement.\n- Pricing: Subscriptions start from €297/month.\n- Contact: 020-7820049.\n\n# RESTRICTIONS\n- Only answer questions based on the information above.\n- If you don't know the answer say: \"I'm not sure about that, but I can have a human colleague follow up with you.\"\n- Do NOT invent features or pricing.\n- Keep answers short and conversational."
+                                    }
+                                ],
+                                "provider": "groq",
+                                "tools": [
+                                    {
+                                        "id": "8c51c69d-c0f8-4ab3-ba61-49a105dcd231",
+                                        "createdAt": "2026-02-10T15:18:13.344Z",
+                                        "updatedAt": "2026-02-10T16:02:29.606Z",
+                                        "type": "function",
+                                        "function": {
+                                            "name": "capture_lead",
+                                            "parameters": {
+                                                "type": "object",
+                                                "required": [
+                                                    "intrest"
+                                                ],
+                                                "properties": {
+                                                    "name": {
+                                                        "type": "string",
+                                                        "default": "",
+                                                        "description": "\"The caller's name\""
+                                                    },
+                                                    "phone": {
+                                                        "type": "string",
+                                                        "default": "",
+                                                        "description": "\"The caller's phone number\""
+                                                    },
+                                                    "intrest": {
+                                                        "type": "string",
+                                                        "default": "",
+                                                        "description": " \"What the user wants (demo, pricing, general info)\""
+                                                    }
+                                                }
+                                            },
+                                            "description": "Captures lead details when a user expresses interest or wants a followup"
+                                        },
+                                        "messages": [
+                                            {
+                                                "type": "request-start",
+                                                "blocking": false
+                                            }
+                                        ],
+                                        "orgId": "975da361-801f-4a1b-ace9-4326bd6859b7",
+                                        "server": {
+                                            "url": "https://4ec9-2409-40f0-3182-be5e-3454-9a08-b060-ab37.ngrok-free.app/webhook/voicehelden-lead",
+                                            "timeoutSeconds": 20
+                                        }
+                                    }
+                                ]
+                            },
+                            "firstMessage": "Hi, thanks for calling Voicehelden. This is Gwen, your AI assistant. How can I help you automate your business today?",
+                            "voicemailMessage": "Please call back when you're available.",
+                            "endCallMessage": "Goodbye.",
+                            "transcriber": {
+                                "model": "flux-general-en",
+                                "language": "en",
+                                "provider": "deepgram"
+                            },
+                            "clientMessages": [
+                                "transcript",
+                                "hang",
+                                "metadata",
+                                "tool-calls",
+                                "tool-calls-result",
+                                "tool.completed",
+                                "transfer-update",
+                                "user-interrupted",
+                                "status-update",
+                                "assistant.started"
+                            ],
+                            "analysisPlan": {
+                                "summaryPlan": {
+                                    "enabled": false
+                                },
+                                "successEvaluationPlan": {
+                                    "enabled": false
+                                }
+                            },
+                            "backgroundDenoisingEnabled": true,
+                            "artifactPlan": {
+                                "structuredOutputIds": [
+                                    "87e583af-a39f-4fd2-aee3-7eb196f75e77"
+                                ]
+                            },
+                            "variableValues": {}
+                        }
+                    }
+                },
+                "webhookUrl": "http://localhost:5678/webhook/voicehelden-lead",
+                "executionMode": "production"
+            }
+        ]
+    },
+    "meta": {
+        "templateCredsSetupCompleted": true,
+        "instanceId": "ac7fe0aede2cd116da12f6519d7c7c7cb02b3dc5b84461b7fc8eeadba315b19c"
+    }
+}

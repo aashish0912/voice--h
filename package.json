@@ -1,0 +1,18 @@
+{
+  "name": "voicehelden_assistant",
+  "version": "1.0.0",
+  "description": "-   **Vapi Assistant Config (`vapi_config.json`)**: \"Gwen\", the Voicehelden rep. Handles inbound calls, answers Qs about pricing/services, and captures leads.\r -   **n8n Workflow (`n8n_workflow.json`)**: Receives lead data and logs it. NOTE: For the live demo, the server below can also receive the webhook directly.\r -   **Live Demo System (`server.js`)**: A Node.js Express server that hosts:\r     -   `http://localhost:3000`: The Voicehelden landing page with Vapi widget.\r     -   `http://localhost:3000/admin`: A real-time dashboard of captured leads.\r     -   `http://localhost:3000/api/leads`: The webhook endpoint.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "body-parser": "^2.2.2",
+    "express": "^5.2.1"
+  }
+}

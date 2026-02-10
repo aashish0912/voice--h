@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voicehelden — Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-light: #818cf8;
+            --accent: #06d6a0;
+            --bg-dark: #0a0a1a;
+            --bg-card: rgba(255, 255, 255, 0.04);
+            --text: #e2e8f0;
+            --text-muted: #94a3b8;
+            --border: rgba(255, 255, 255, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* Subtle animated background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background:
+                radial-gradient(ellipse at 15% 50%, rgba(99, 102, 241, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 85% 20%, rgba(6, 214, 160, 0.05) 0%, transparent 50%);
+        }
+
+        /* Nav */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.25rem 2rem;
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(20px);
+            background: rgba(10, 10, 26, 0.8);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.25rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary-light), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-right {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .nav-right a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-right a:hover {
+            color: var(--text);
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: inline-block;
+            animation: pulse 2s infinite;
+            margin-right: 4px;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+                box-shadow: 0 0 0 0 rgba(6, 214, 160, 0.4);
+            }
+
+            50% {
+                opacity: 0.7;
+                box-shadow: 0 0 0 6px rgba(6, 214, 160, 0);
+            }
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+
+        /* Stats Grid */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: border-color 0.3s;
+        }
+
+        .stat-card:hover {
+            border-color: rgba(99, 102, 241, 0.3);
+        }
+
+        .stat-value {
+            font-size: 2.25rem;
+            font-weight: 800;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-value.blue {
+            color: var(--primary-light);
+        }
+
+        .stat-value.green {
+            color: var(--accent);
+        }
+
+        .stat-value.purple {
+            color: #a78bfa;
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        /* Table */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .section-header h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .table-wrapper {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 0.875rem 1.25rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: rgba(255, 255, 255, 0.02);
+            font-weight: 600;
+            color: var(--text-muted);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background: rgba(99, 102, 241, 0.03);
+        }
+
+        td {
+            font-size: 0.9rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.2rem 0.65rem;
+            border-radius: 999px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .badge-live {
+            background: rgba(99, 102, 241, 0.15);
+            color: var(--primary-light);
+        }
+
+        .badge-sheet {
+            background: rgba(6, 214, 160, 0.15);
+            color: var(--accent);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-muted);
+            display: none;
+        }
+
+        .empty-state .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Sheet Embed */
+        .sheet-section {
+            margin-top: 2.5rem;
+        }
+
+        .sheet-wrapper {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            height: 450px;
+        }
+
+        .sheet-wrapper iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        @media (max-width: 768px) {
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            nav {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <div class="logo">Voicehelden Admin</div>
+        <div class="nav-right">
+            <span><span class="live-dot"></span> System Live</span>
+            <a href="/">← Back to Site</a>
+        </div>
+    </nav>
+
+    <div class="container">
+
+        <!-- Stats -->
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-value blue" id="total-leads">0</div>
+                <div class="stat-label">Total Leads</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value green" id="sheet-leads">0</div>
+                <div class="stat-label">From Google Sheet</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value purple" id="last-active">—</div>
+                <div class="stat-label">Last Activity</div>
+            </div>
+        </div>
+
+        <!-- Leads Table -->
+        <div class="section-header">
+            <h2>📋 Inbound Leads</h2>
+            <span style="color: var(--text-muted); font-size: 0.8rem;">Auto-refreshes every 5s</span>
+        </div>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Name</th>
+                        <th>Phone</th>
+                        <th>Interest</th>
+                        <th>Source</th>
+                    </tr>
+                </thead>
+                <tbody id="leads-body"></tbody>
+            </table>
+        </div>
+
+        <div class="empty-state" id="empty-state">
+            <div class="empty-icon">📭</div>
+            <p>No leads captured yet.<br>Call the assistant or chat to test!</p>
+        </div>
+
+        <!-- Google Sheet Embed -->
+        <div class="sheet-section">
+            <div class="section-header">
+                <h2>📊 Live Google Sheet</h2>
+            </div>
+            <div class="sheet-wrapper">
+                <iframe
+                    src="https://docs.google.com/spreadsheets/d/1uq4wQ-SH_iXvfRioBG9A8edMsGoMWIzIgoinJ-q0heQ/edit?usp=sharing&rm=minimal"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function fetchLeads() {
+            try {
+                const localRes = await fetch('/api/leads');
+                const localLeads = await localRes.json();
+
+                let sheetLeads = [];
+                try {
+                    const sheetRes = await fetch('/api/sheet-leads');
+                    sheetLeads = await sheetRes.json();
+                } catch (e) {
+                    console.warn('Sheet fetch failed:', e);
+                }
+
+                const allLeads = [...localLeads, ...sheetLeads];
+
+                // Update stats
+                document.getElementById('total-leads').textContent = allLeads.length;
+                document.getElementById('sheet-leads').textContent = sheetLeads.length;
+
+                if (allLeads.length > 0) {
+                    document.getElementById('last-active').textContent = allLeads[0].timestamp || '—';
+                }
+
+                const tbody = document.getElementById('leads-body');
+                const emptyState = document.getElementById('empty-state');
+
+                if (allLeads.length === 0) {
+                    tbody.innerHTML = '';
+                    emptyState.style.display = 'block';
+                    return;
+                }
+
+                emptyState.style.display = 'none';
+                tbody.innerHTML = allLeads.map(lead => {
+                    const isSheet = lead.source === 'Google Sheet';
+                    return `
+            <tr>
+                <td>${lead.timestamp || '—'}</td>
+                <td><strong>${lead.name || 'Unknown'}</strong></td>
+                <td>${lead.phone || 'N/A'}</td>
+                <td>${lead.intrest || lead.interest || 'General'}</td>
+                <td><span class="badge ${isSheet ? 'badge-sheet' : 'badge-live'}">${isSheet ? '📊 Sheet' : '🔴 Live'}</span></td>
+            </tr>`;
+                }).join('');
+            } catch (e) {
+                console.error('Error:', e);
+            }
+        }
+
+        fetchLeads();
+        setInterval(fetchLeads, 5000);
+    </script>
+
+</body>
+
+</html>
